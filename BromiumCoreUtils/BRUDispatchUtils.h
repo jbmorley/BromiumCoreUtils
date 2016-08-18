@@ -16,6 +16,8 @@
 #include <dispatch/dispatch.h>
 #import <Foundation/NSException.h>
 
+#import "BRUAsserts.h"
+
 /**
  * This function must return a pointer that uniquely identifies the queue `q`. The caller must never dereference
  * that pointer, it is also not auto-nilled.
