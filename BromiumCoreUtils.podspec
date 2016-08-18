@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
   s.author       = { "Jason Barrie Morley" => "jason.morley@inseven.co.uk" }
   s.source       = { :git => "https://github.com/jbmorley/BromiumCoreUtils.git", :tag => "1.0.0" }
 
-  s.source_files = 'BromiumCoreUtils/*.{h,m}'
+  s.source_files = 'BromiumCoreUtils/BRUAsserts.{h,m}', 'BromiumCoreUtils/BRUInternalMaybeDDLog.{h,m}', 'BromiumCoreUtils/BRUBaseDefines.{h,m}'
 
   s.requires_arc = true
 
