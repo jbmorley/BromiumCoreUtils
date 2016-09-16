@@ -7,6 +7,8 @@
 //  Created by Johannes Weiß on 01/06/2016.
 //
 
+#import "BRUAsserts.h"
+
 @class NSError;
 
 #define BRUErrorReasonKey @"reason"
