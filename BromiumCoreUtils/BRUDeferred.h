@@ -9,11 +9,14 @@
 
 #import <Foundation/Foundation.h>
 
-typedef void (^BRUPromiseThenBlock)(id __nullable value);
+@protocol BRUPromise;
+
+typedef void (^BRUPromiseContinuationBlock)(id<BRUPromise> __nullable promise);
+typedef void (^BRUPromiseThenBlock)(id __nullable value, BRUPromiseContinuationBlock __nonnull continuationBlock);
 
 @protocol BRUPromise <NSObject>
 
-- (void)then:(nonnull BRUPromiseThenBlock)block;
+- (nonnull id<BRUPromise>)then:(nonnull BRUPromiseThenBlock)block;
 
 @end
 

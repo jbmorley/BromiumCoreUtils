@@ -16,6 +16,8 @@ typedef NS_ENUM(NSUInteger, BRUPromiseState) {
     BRUPromiseStateResolved = 2,
 };
 
+typedef void (^BRUPromiseTaskBlock)(id __nullable value);
+
 @interface BRUDeferred () <BRUPromise>
 
 @property (nonatomic, strong, readonly) dispatch_queue_t syncQueue;
@@ -24,7 +26,7 @@ typedef NS_ENUM(NSUInteger, BRUPromiseState) {
 /**
  * Accessed on syncQueue.
  */
-@property (nonatomic, strong, readonly) NSMutableArray *thenBlocks;
+@property (nonatomic, strong, readonly) NSMutableArray<BRUPromiseTaskBlock> *taskBlocks;
 
 /**
  * Accessed on syncQueue.
@@ -68,7 +70,7 @@ typedef NS_ENUM(NSUInteger, BRUPromiseState) {
             _completionQueue = bru_dispatch_queue_create("com.bromium.BromiumUtils.BRUPromise.completionQueue",
                                                          DISPATCH_QUEUE_CONCURRENT);
         }
-        _thenBlocks = [NSMutableArray array];
+        _taskBlocks = [NSMutableArray array];
         _value = nil;
         _state = BRUPromiseStatePending;
     }
@@ -107,16 +109,34 @@ typedef NS_ENUM(NSUInteger, BRUPromiseState) {
 
 #pragma mark - BRUPromise
 
-- (void)then:(nonnull BRUPromiseThenBlock)block
+- (nonnull id<BRUPromise>)then:(nonnull BRUPromiseThenBlock)block
 {
     BRUParameterAssert(block);
 
+    BRUDeferred *next = [BRUDeferred deferredWithTargetQueue:self.completionQueue];
+
     dispatch_async(self.syncQueue, ^{
 
-        [self.thenBlocks addObject:[block copy]];
+        BRUPromiseThenBlock blockCopy = [block copy];
+        BRUPromiseTaskBlock resolver = ^(id value) {
+            blockCopy(value, ^(id<BRUPromise> promise) {
+                if (promise) {
+                    [promise then:^(id  _Nullable value, BRUPromiseContinuationBlock  _Nonnull continuationBlock) {
+                        [next resolve:value];
+                        continuationBlock(nil);
+                    }];
+                } else {
+                    [next resolve:value];
+                }
+            });
+        };
+
+        [self.taskBlocks addObject:resolver];
         [self processBlocks];
 
     });
+
+    return [next promise];
 }
 
 - (void)processBlocks
@@ -129,7 +149,7 @@ typedef NS_ENUM(NSUInteger, BRUPromiseState) {
 
     } else if (self.state == BRUPromiseStateResolved) {
 
-        for (BRUPromiseThenBlock block in self.thenBlocks) {
+        for (BRUPromiseTaskBlock block in self.taskBlocks) {
 
             dispatch_async(self.completionQueue, ^{
 
@@ -138,7 +158,7 @@ typedef NS_ENUM(NSUInteger, BRUPromiseState) {
             });
 
         }
-        [self.thenBlocks removeAllObjects];
+        [self.taskBlocks removeAllObjects];
 
     } else {
 
