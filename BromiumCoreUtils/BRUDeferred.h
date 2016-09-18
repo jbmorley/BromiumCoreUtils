@@ -22,6 +22,9 @@ typedef void (^BRUPromiseThenBlock)(id __nullable value, BRUPromiseContinuationB
 
 @interface BRUDeferred : NSObject
 
++ (nonnull id<BRUPromise>)promiseWithValue:(nullable id)value;
++ (nonnull id<BRUPromise>)promiseWithTargetQueue:(nullable dispatch_queue_t)targetQueue value:(nullable id)value;
+
 + (nonnull instancetype)deferred;
 + (nonnull instancetype)deferredWithTargetQueue:(nullable dispatch_queue_t)targetQueue;
 - (nonnull instancetype)initWithTargetQueue:(nullable dispatch_queue_t)targetQueue;

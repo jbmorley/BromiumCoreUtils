@@ -42,6 +42,18 @@ typedef void (^BRUPromiseTaskBlock)(id __nullable value);
 
 @implementation BRUDeferred
 
++ (nonnull id<BRUPromise>)promiseWithValue:(nullable id)value
+{
+    return [BRUDeferred promiseWithTargetQueue:nil value:value];
+}
+
++ (nonnull id<BRUPromise>)promiseWithTargetQueue:(nullable dispatch_queue_t)targetQueue value:(nullable id)value
+{
+    BRUDeferred *deferred = [BRUDeferred deferredWithTargetQueue:targetQueue];
+    [deferred resolve:value];
+    return deferred;
+}
+
 + (nonnull instancetype)deferred
 {
     return [self new];
