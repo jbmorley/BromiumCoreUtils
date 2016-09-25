@@ -91,7 +91,7 @@
                                                     line:line
                                                 function:function
                                                  message:message]) {
-        NSLog(@"ERROR in file '%s', function '%s', line %lu: %@", file, function, line, message);
+        NSLog(@"ERROR in file '%s', function '%s', line %lu: %@", file, function, (unsigned long)line, message);
     }
 }
 
