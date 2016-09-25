@@ -12,6 +12,8 @@ Pod::Spec.new do |s|
 
   s.requires_arc = true
 
-  s.platform = :ios, "9.0", :osx, "10.10"
+  s.ios.deployment_target = '9.0'
+  s.osx.deployment_target = '10.10'
+  s.watchos.deployment_target = '3.0'
 
 end
