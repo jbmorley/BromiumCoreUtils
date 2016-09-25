@@ -174,7 +174,7 @@ typedef void (^BRUPromiseTaskBlock)(id __nullable value);
 
     } else {
 
-        BRU_ASSERT_NOT_REACHED(@"Unknown state %ld", self.state);
+        BRU_ASSERT_NOT_REACHED(@"Unknown state %ld", (unsigned long)self.state);
 
     }
 }
