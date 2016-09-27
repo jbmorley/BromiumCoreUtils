@@ -108,9 +108,10 @@ BRU_DEFAULT_INIT_UNAVAILABLE_IMPL
         return NO;
     }
     BRUEitherErrorOrSuccess *typedObject = object;
-    return self.isSuccessful == typedObject.isSuccessful &&
-    /**/((self.isSuccessful && [self.object isEqualTo:typedObject.object]) ||
-         (!self.isSuccessful && [self.error isEqualTo:typedObject.error]));
+
+    return self.isSuccessful == typedObject.isSuccessful && YES;
+    /**/((self.isSuccessful && [self.object isEqual:typedObject.object]) ||
+         (!self.isSuccessful && [self.error isEqual:typedObject.error]));
 }
 
 - (NSUInteger)hash
